@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="utf-8">	
+		<title>PlacePickr</title>
+		<link href='http://fonts.googleapis.com/css?family=Oleo+Script+Swash+Caps' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename="css/bootstrap.min.css") }}"> 
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename="css/jenelle.css") }}">
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename="css/slider.css") }}">
+		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+		<script src='http://twitter.github.com/typeahead.js/releases/latest/typeahead.js'></script>
+		<link rel='stylesheet' href='http://twitter.github.com/typeahead.js/releases/latest/typeahead.css' />
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename="css/typeahead.css") }}">
+		<script src="{{ url_for('static', filename="js/bootstrap-slider.js") }}"></script>
+		<div id="header">
+			<h1><a id="title" href="/">PlacePickr</a> 
+			<span id="credits"> by <a href="http://jenellium.org">Jenelle Bray</a></span>
+			<span id="about"><a href="/slideshow">Slides</a></span></h1>
+		</div>
+	</head>
+	<body>
+		{% block content %}{% endblock %}
+		<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+		<script src="{{ url_for('static', filename="js/bootstrap.js") }}"></script>
+	</body>
+</html>

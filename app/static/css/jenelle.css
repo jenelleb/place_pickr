@@ -1,0 +1,143 @@
+html { height: 100% }
+	body { 
+		height: 100%; 
+		margin: 0; 
+		padding: 0 
+	}
+	#map-canvas {
+		position: absolute; 
+		left: 400px; 
+		right: 0px; 
+		top:54px; 
+		bottom: 0px
+	}
+	#map-canvas img {max-width: none}
+	#scroll_list {
+		position: absolute; 
+		left: 0px; top: 165px; 
+		bottom: 0px; width: 400px; 
+		overflow-y: scroll; 
+		background-color:#f9f9f9; 
+		border-top: 1px solid #aaa
+	}
+	#left_side {
+		position: absolute; 
+		left: 0px; 
+		top: 60px; 
+		bottom: 0px; 
+		width: 400px; 
+		padding-left:8px
+	}
+	.result { 
+		transition: top 1s ease; 
+		position: absolute; 
+		left: 8px; 
+		box-shadow: 0px 1px 7px 2px #CCC; 
+		width: 360px; 
+		cursor: pointer;
+		background-color: white; 
+		padding: 4px 
+	}
+	.result:hover {background-color: #ececec}
+	.result p {padding: 4px}
+	.result.selected {background-color: #C6C6C6 }
+	.sliderbox {
+		float: right; 
+		margin-right: 16px
+	}
+	#title {font-family: 'Oleo Script Swash Caps', cursive}
+	#credits {
+		font-size: 16px;
+		color: #666
+	}
+	#about {
+		font-size: 16px; 
+		float: right; 
+		color: #666
+	}
+	.slider-selection {
+		background-image: none !important;
+		background-color: #0e90d2 !important
+	}
+	#header {
+		background-color: #eee; 
+		border-bottom: 1px solid #aaa; 
+		padding-top: 4px; 
+		padding-left: 16px; 
+		padding-right: 16px
+	}
+	#slider_header {margin-bottom: 4px}
+	.high {color: green}
+	.medium {color: rgb(255,127,80)}
+	.low {color: rgb(200,0,0)}
+	.properties {
+		font-size: 13px;
+		line-height: 18px;
+		color: #888;
+		position: relative
+	}
+	#login_form {
+		margin-left: 50px; 
+		margin-top: 30px; 
+		background-color: white; 
+		width: 240px; 
+		padding: 20px; 
+		position: absolute; 
+		left: 30px; 
+		box-shadow: 0px 2px 10px 1px #CCC; 
+		border-radius: 4px
+	}
+	#explanation {
+		width: 440px; 
+		position: absolute; 
+		left: 450px; 
+		top: 65px; 
+		text-align: justify
+	}
+	#explanation h2 {font-size: 19px}
+	.slider-handle {opacity: 1 !important}
+	.sliderbox .slider {
+		width: 220px !important; 
+		margin-right: 10px; 
+		margin-left: 10px
+	}
+	h1 {margin: 0px !important}
+
+	.schools_text {
+		position: absolute;
+		left: 129px
+	}
+	.crime_text {
+		position: absolute;
+		left: 129px
+	}
+	.walk_text {
+		position: absolute;
+		left: 218px
+	}
+	.price_text {
+		position: absolute;
+		left: 218px
+	}
+
+	input[type=submit] {font-size:18px; padding:8px; margin-top:10px}
+	.slideshare-content {
+		width: 100%;
+		margin: 0px auto;
+	}
+	.slideshare-embed-container {
+		height: 0;
+		width: 100%;
+		padding-bottom: 83.37%;
+		overflow: hidden;
+		position: relative;
+	}
+	.slideshare-embed-container iframe {
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		top: 0;
+		left: 0;
+	}
+
+	.row {margin-left: 100px !important}

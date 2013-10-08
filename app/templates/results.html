@@ -1,0 +1,300 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div id = "left_side">
+	<div id="slider_header"> How important is each factor?</div>
+	<div class="sliderbox">
+		<div class ="label"> Short {{zip1}} Commute </div>
+		<input id="slider_commute1" data-slider-tooltip="hide" value=2 data-slider-value=2>
+	</div>
+	<div class="sliderbox">
+		<div class ="label"> Short {{zip2}} Commute </div>
+		<input id="slider_commute2" data-slider-tooltip="hide" value=2 data-slider-value=2>
+	</div>
+	<div class="sliderbox">
+		<div class ="label"> School Quality </div>
+		<input id="slider_school" data-slider-tooltip="hide" value=1 data-slider-value=1>
+	</div>
+	<div class="sliderbox">
+		<div class ="label"> Safety </div>
+		<input id="slider_crime" data-slider-tooltip="hide" value=1 data-slider-value=1>
+	</div>
+	<div class="sliderbox">
+		<div class ="label"> Walkability </div>
+		<input id="slider_walk" data-slider-tooltip="hide" value=1 data-slider-value=1>
+	</div>
+	<div class="sliderbox">
+		<div class ="label"> Cheap Housing </div>
+		<input id="slider_price" data-slider-tooltip="hide" value=1 data-slider-value=1>
+	</div>
+
+	<div id="scroll_list">
+	{% for zip_code in zip_codes %}    
+		<div id="{{zip_code.zip}}" class="result" style="display:none">
+			<div class="result_title"><b>{{zip_code.zip}}</b>, {{zip_code.city}}</div> 
+			<div class="properties">
+				<span class="{{zip_code.commute1_pcntl}} commute1_text">Commute 1: {{zip_code.commute1_mins}} min</span> 
+				<span class="{{zip_code.school_pcntl}} schools_text">Schools: {{zip_code.school}}</span>
+				<span class="{{zip_code.walk_pcntl}} walk_text">Walkability: {{zip_code.walk}}</span></br>
+				<span class="{{zip_code.commute2_pcntl}} commute2_text">Commute 2: {{zip_code.commute2_mins}} min</span>
+				<span class="{{zip_code.crime_pcntl}} crime_text">Safety: {{zip_code.crime}}</span>
+				<span class="{{zip_code.price_pcntl}} price_text">{{housing_title}}: ${{zip_code.price}}</span>   
+			</div>
+		</div>
+	{% endfor %}
+	</div>
+</div>
+
+<div id="map-canvas"></div>
+<script type="text/javascript"
+	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAuq-eBUgZ1PQlmK61dUdXA60qfmEZQk1s&sensor=false">
+</script>
+
+<script>
+	var zip_code_json = {{jsonstr|safe}};
+	function color_for_score(s)
+	{
+		if (s >= 0.90)
+		{
+			var red = 0;
+			var green = 100;
+			var blue = 50;
+		}
+		if (s >= 0.65 && s < 0.90)
+		{
+			var red = Math.floor(720-800*s);
+			var green = 150;
+			var blue = 0;
+		}
+		if (s < 0.65 && s >= 0.4)
+		{
+			var red = 200;
+			var green = Math.floor(600*s-240);
+			var blue = 0;
+		} 
+		if (s < 0.4)
+		{
+			var red = 200;
+			var green = 0;
+			var blue = 0;
+		}
+		var red_str = red.toString();
+		var green_str = green.toString();
+		var blue_str = blue.toString();
+		color = "rgb(" + red_str + "," + green_str + "," + blue_str + ")";
+		return color;
+	}
+        
+	function google_maps_coords(poly)
+	{
+		var zip_coords_all = [];
+		for (var j=0;j<poly.length;j++)
+		{  
+			var zip_coords = []
+			for (var k=0;k<poly[j].length;k++)
+			{
+				zip_coords.push(new google.maps.LatLng(poly[j][k][0],poly[j][k][1]));
+			}
+			zip_coords_all.push(zip_coords)
+		}
+		return zip_coords_all;
+	}
+      
+	function initialize() 
+	{
+		var myLatLng = new google.maps.LatLng(37.681647, -122.080185);
+		var mapOptions = {
+			center: myLatLng,
+			zoom: 9,
+			mapTypeId: google.maps.MapTypeId.ROADMAP
+		}
+		map = new google.maps.Map(document.getElementById("map-canvas"),mapOptions);
+		var LatLngWork1 = new google.maps.LatLng({{zip1_lng}},{{zip1_lat}});
+		var LatLngWork2 = new google.maps.LatLng({{zip2_lng}},{{zip2_lat}});
+		var marker1 = new google.maps.Marker({
+			position: LatLngWork1,
+			map: map,
+			title:"Work1",
+        });
+		var marker2 = new google.maps.Marker({
+			position: LatLngWork2,
+			map: map,
+			title:"Work2",
+		});
+		zip_select_area = new google.maps.Polygon({
+			paths: google_maps_coords(zip_code_json[0].polygon),
+			strokeColor: 'rgb(0,0,0)',
+			strokeOpacity: 0,
+			strokeWeight: 0,
+			fillColor: 'rgb(0,0,0)',
+			fillOpacity: 0
+		});
+        zip_select_area.setMap(map);
+		for (var i=0;i<222;i++)
+        {    
+			var zip_area;       
+			zip_area = new google.maps.Polygon({
+				paths: google_maps_coords(zip_code_json[i].polygon),
+				strokeColor: 'rgb(0,0,0)',
+				strokeOpacity: 0.5,
+				strokeWeight: 1,
+				fillColor: color_for_score(zip_code_json[i].score_pcntl),
+				fillOpacity: 0.5
+			});
+			zip_code_json[i].map_poly = zip_area;  
+			reactToPolygonClick(zip_area,zip_code_json[i].zip,zip_code_json[i].polygon);
+			zip_area.setMap(map);
+        }   
+		recompute(); 
+	}
+      
+	function reactToPolygonClick(zip_area, zip, polygon) 
+	{
+		google.maps.event.addListener(zip_area,'click',function(){
+			zip_select_area.setOptions({
+				paths: google_maps_coords(polygon),
+				strokeColor: 'rgb(0,0,0)',
+				strokeOpacity: 1,
+				strokeWeight: 5,
+				fillColor: 'rgb(0,0,255)',
+				fillOpacity: 0
+			})
+			if (old_selected != zip)
+			{
+				$('#'+zip).addClass('selected');
+				$('#scroll_list').animate({
+					scrollTop:$('#'+zip).css("top")
+				})
+				$('#'+old_selected).removeClass('selected')
+				old_selected = zip;  
+			}
+		});
+	}
+
+	function recompute(ev) 
+	{
+    	if (ev)
+		{
+			ev.target.value = ev.value;
+		}
+		var school_wt = $('#slider_school').val();
+		var crime_wt = $('#slider_crime').val();
+		var walk_wt = $('#slider_walk').val();
+		var commute1_wt = $('#slider_commute1').val();
+		var price_wt = $('#slider_price').val();
+		var commute2_wt = $('#slider_commute2').val();
+		var score_new = [];
+		poly = [];
+		poly_map = [];
+		for (var i=0;i<222;i++)
+		{
+			zipc = zip_code_json[i].zip;
+			poly[zipc] = zip_code_json[i].polygon;
+			poly_map[zipc] = zip_code_json[i].map_poly;
+			commute_diff_wt = Math.min(commute1_wt,commute2_wt);
+			score = school_wt*zip_code_json[i].school_z-crime_wt*zip_code_json[i].crime_z+walk_wt*zip_code_json[i].walk_z-commute1_wt*zip_code_json[i].commute1_z-commute2_wt*zip_code_json[i].commute2_z-price_wt*zip_code_json[i].price_z-commute_diff_wt*Math.abs(zip_code_json[i].commute2_z-zip_code_json[i].commute1_z);
+			score_new.push([zipc,score]);
+		}
+		score_new.sort(function(a,b){ return b[1] - a[1];});
+		var quart1 = score_new[166][1];
+		var quart3 = score_new[55][1];
+		var outlier_low = quart1-1.5*(quart3-quart1);
+		var outlier_high = quart3+1.5*(quart3-quart1);
+		if (score_new[221][1] < outlier_low)
+		{
+			var min_score = outlier_low;
+		}
+		else
+		{
+			var min_score = score_new[221][1];
+		}
+		if (score_new[0][1] > outlier_high)
+		{
+			var max_score = outlier_high;
+		}
+		else
+		{
+			var max_score = score_new[0][1];
+		}
+		var score_range = max_score - min_score;
+		for (var j=0;j<222;j++)
+		{
+			zipc = score_new[j][0];
+			if (score_range != 0)
+			{
+				norm = (score_new[j][1]-min_score)/score_range;
+				document.getElementById(zipc).style.top=(j*73+4)+"px";
+				document.getElementById(zipc).style.display="block";
+			}
+			else
+			{
+				norm = 0.75;
+			} 
+			poly_map[zipc].setOptions({
+				paths: google_maps_coords(poly[zipc]),
+				strokeColor: 'rgb(0,0,0)',
+				strokeOpacity: 0.5,
+				strokeWeight: 1,
+				fillColor: color_for_score(norm),
+				fillOpacity: 0.5
+			})
+		}
+		$('#scroll_list').animate({scrollTop:0})   
+		zip_select_area.setOptions({
+			paths: google_maps_coords(poly[score_new[0][0]]),
+			strokeColor: 'rgb(0,0,0)',
+			strokeOpacity: 1,
+			strokeWeight: 5,
+			fillColor: 'rgb(0,0,255)',
+			fillOpacity: 0
+		})
+		$('#'+old_selected).removeClass('selected');
+		$('#'+score_new[0][0]).addClass('selected');
+		old_selected = score_new[0][0];
+		map.panTo(new google.maps.LatLng(poly[old_selected][0][0][0],poly[old_selected][0][0][1]));
+		map.setZoom(10);
+	}
+      
+	google.maps.event.addDomListener(window, 'load', initialize);
+      
+	$('#slider_school').slider().on('slideStop', function(ev){
+		recompute(ev);
+	})
+	$('#slider_crime').slider().on('slideStop', function(ev){
+		recompute(ev);
+	})
+	$('#slider_walk').slider().on('slideStop', function(ev){
+		recompute(ev);
+	})	
+	$('#slider_commute1').slider().on('slideStop', function(ev){
+		recompute(ev);
+	})	
+	$('#slider_price').slider().on('slideStop', function(ev){
+		recompute(ev);
+	})
+	$('#slider_commute2').slider().on('slideStop', function(ev){
+		recompute(ev);
+	})	
+
+	old_selected = zip_code_json[0].zip;      
+	$('.result').click( function() {
+		zip_select_area.setOptions({
+			paths: google_maps_coords(poly[this.id]),
+			strokeColor: 'rgb(0,0,0)',
+			strokeOpacity: 1,
+			strokeWeight: 5,
+			fillColor: 'rgb(0,0,255)',
+			fillOpacity: 0
+		})
+		if (this.id != old_selected)
+		{
+			$(this).addClass('selected');
+			$('#'+old_selected).removeClass('selected')
+			old_selected = this.id;  
+			map.panTo(new google.maps.LatLng(poly[this.id][0][0][0],poly[this.id][0][0][1]));
+			map.setZoom(10);
+		}
+	});
+</script>
+    
+{% endblock %}

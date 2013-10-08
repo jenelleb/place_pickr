@@ -1,0 +1,48 @@
+<!-- extend from base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+<div id="login_form">
+	<form action="" method="post" name="login" onsubmit="return validateform()">    
+		{{form.hidden_tag()}}        
+		Zip code or city of your job:<br>        
+		{{form.zip1(size=40, placeholder="e.g. 94305")}}<br>    
+		</p>    
+		<p>        
+		Zip code or city of your partner's job:<br>        
+		{{form.zip2(size=40, placeholder="e.g. 94720")}}</p>    
+		<p>Rent or buy?</br>{{form.housing}}</p>    
+		<p><div id="submit_button"><input type="submit" value="Help me pick a place"></div>
+	</form>
+</div>
+
+<script>
+	var zips = ["94501, Alameda", "94502, Alameda", "94706, Albany", "94702, Berkeley", "94703, Berkeley", "94704, Berkeley", "94705, Berkeley", "94707, Berkeley", "94708, Berkeley", "94709, Berkeley", "94710, Berkeley", "94720, Berkeley", "94546, Castro Valley", "94552, Castro Valley", "94568, Dublin", "94608, Emeryville", "94536, Fremont", "94538, Fremont", "94539, Fremont", "94555, Fremont", "94541, Hayward", "94542, Hayward", "94544, Hayward", "94545, Hayward", "94550, Livermore", "94551, Livermore", "94560, Newark", "94601, Oakland", "94602, Oakland", "94603, Oakland", "94605, Oakland", "94606, Oakland", "94607, Oakland", "94609, Oakland", "94610, Oakland", "94612, Oakland", "94618, Oakland", "94619, Oakland", "94621, Oakland", "94611, Piedmont", "94566, Pleasanton", "94588, Pleasanton", "94577, San Leandro", "94578, San Leandro", "94579, San Leandro", "94580, San Lorenzo", "94587, Union City", "94507, Alamo", "94509, Antioch", "94531, Antioch", "94513, Brentwood", "94514, Byron", "94517, Clayton", "94518, Concord", "94519, Concord", "94520, Concord", "94521, Concord", "94506, Danville", "94526, Danville", "94528, Diablo", "94530, El Cerrito", "94803, El Sobrante", "94547, Hercules", "94549, Lafayette", "94553, Martinez", "94556, Moraga", "94561, Oakley", "94563, Orinda", "94564, Pinole", "94565, Pittsburg", "94523, Pleasant Hill", "94801, Richmond", "94804, Richmond", "94805, Richmond", "94572, Rodeo", "94806, San Pablo", "94582, San Ramon", "94583, San Ramon", "94595, Walnut Creek", "94596, Walnut Creek", "94597, Walnut Creek", "94598, Walnut Creek", "94920, Belvedere Tiburon", "94925, Corte Madera", "94930, Fairfax", "94904, Greenbrae", "94937, Inverness", "94939, Larkspur", "94941, Mill Valley", "94945, Novato", "94947, Novato", "94949, Novato", "94960, San Anselmo", "94901, San Rafael", "94903, San Rafael", "94965, Sausalito", "94970, Stinson Beach", "94503, American Canyon", "94558, Napa", "94559, Napa", "94574, Saint Helena", "94599, Yountville", "94102, San Francisco", "94103, San Francisco", "94105, San Francisco", "94107, San Francisco", "94108, San Francisco", "94109, San Francisco", "94110, San Francisco", "94111, San Francisco", "94112, San Francisco", "94114, San Francisco", "94115, San Francisco", "94116, San Francisco", "94117, San Francisco", "94118, San Francisco", "94121, San Francisco", "94122, San Francisco", "94123, San Francisco", "94124, San Francisco", "94127, San Francisco", "94131, San Francisco", "94132, San Francisco", "94133, San Francisco", "94134, San Francisco", "94027, Atherton", "94002, Belmont", "94005, Brisbane", "94010, Burlingame", "94014, Daly City", "94015, Daly City", "94019, Half Moon Bay", "94025, Menlo Park", "94028, Menlo Park", "94030, Millbrae", "94037, Montara", "94038, Moss Beach", "94044, Pacifica", "94303, Palo Alto", "94305, Stanford", "94061, Redwood City", "94063, Redwood City", "94065, Redwood City", "94066, San Bruno", "94070, San Carlos", "94401, San Mateo", "94402, San Mateo", "94403, San Mateo", "94404, San Mateo", "94080, South San Francisco", "94062, Woodside", "95008, Campbell", "95014, Cupertino", "95020, Gilroy", "94022, Los Altos", "94024, Los Altos", "95030, Los Gatos", "95032, Los Gatos", "95033, Los Gatos", "95035, Milpitas", "95037, Morgan Hill", "94040, Mountain View", "94041, Mountain View", "94043, Mountain View", "94301, Palo Alto", "94306, Palo Alto", "95110, San Jose", "95111, San Jose", "95112, San Jose", "95116, San Jose", "95117, San Jose", "95118, San Jose", "95119, San Jose", "95120, San Jose", "95121, San Jose", "95122, San Jose", "95123, San Jose", "95124, San Jose", "95125, San Jose", "95126, San Jose", "95127, San Jose", "95128, San Jose", "95129, San Jose", "95130, San Jose", "95131, San Jose", "95132, San Jose", "95133, San Jose", "95134, San Jose", "95135, San Jose", "95136, San Jose", "95138, San Jose", "95139, San Jose", "95148, San Jose", "95046, San Martin", "95050, Santa Clara", "95051, Santa Clara", "95054, Santa Clara", "95070, Saratoga", "94085, Sunnyvale", "94086, Sunnyvale", "94087, Sunnyvale", "94089, Sunnyvale", "94510, Benicia", "95620, Dixon", "94533, Fairfield", "94534, Fairfield", "94571, Rio Vista", "94585, Suisun City", "95687, Vacaville", "95688, Vacaville", "94589, Vallejo", "94590, Vallejo", "94591, Vallejo", "94592, Vallejo", "94923, Bodega Bay", "94931, Cotati", "95436, Forestville", "95442, Glen Ellen", "95446, Guerneville", "95448, Healdsburg", "94951, Penngrove", "94952, Petaluma", "94954, Petaluma", "94928, Rohnert Park", "95401, Santa Rosa", "95403, Santa Rosa", "95404, Santa Rosa", "95405, Santa Rosa", "95407, Santa Rosa", "95409, Santa Rosa", "95472, Sebastopol", "95476, Sonoma", "95492, Windsor"];
+	$('#zip1').typeahead({local: zips});
+	$('#zip2').typeahead({local: zips});
+
+	function validateform(){
+		if (zips.indexOf(document.getElementById("zip1").value)==-1 || zips.indexOf(document.getElementById("zip2").value)==-1)
+		{
+			alert("Zip codes must be in the SF Bay Area");
+			return(false);
+		}
+		else
+		{
+			return(true);
+		}
+	}
+</script>
+
+<div id="explanation">
+	<h2>PlacePickr helps couples decide where to live</h2>
+	<p>Enter the zip codes of both your job locations in the San Francisco Bay Area,
+	and PlacePickr will help you pick the best place
+	based on the importance you assign to the following factors:
+	<li>commute times</li>
+	<li>rent or house prices</li>
+	<li>safety</li>
+	<li>school quality</li>
+	<li>walkability</li></p>
+</div>
+{% endblock %}
